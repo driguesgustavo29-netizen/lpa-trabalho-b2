@@ -16,7 +16,7 @@ typedef struct {
     int coluna;
 } Veiculo;
 
-// Limpa caracteres restantes da entrada
+/* Limpa caracteres restantes da entrada */
 void limparBufferEntrada() {
     int caractere;
 
@@ -24,7 +24,7 @@ void limparBufferEntrada() {
     }
 }
 
-// Inicializa todas as vagas como livres
+/* Inicializa o mapa */
 void inicializarMapa(int mapa[FILEIRAS][COLUNAS]) {
     for (int i = 0; i < FILEIRAS; i++) {
         for (int j = 0; j < COLUNAS; j++) {
@@ -33,7 +33,7 @@ void inicializarMapa(int mapa[FILEIRAS][COLUNAS]) {
     }
 }
 
-// Exibe o mapa do estacionamento
+/* Exibe o mapa de vagas */
 void exibirMapa(int mapa[FILEIRAS][COLUNAS]) {
     printf("\n===== MAPA DO ESTACIONAMENTO =====\n\n");
 
@@ -48,11 +48,7 @@ void exibirMapa(int mapa[FILEIRAS][COLUNAS]) {
         printf("F%d   ", i + 1);
 
         for (int j = 0; j < COLUNAS; j++) {
-            if (mapa[i][j] == 0) {
-                printf(".  ");
-            } else {
-                printf("X  ");
-            }
+            printf("%c  ", mapa[i][j] == 1 ? 'X' : '.');
         }
 
         printf("\n");
@@ -61,7 +57,7 @@ void exibirMapa(int mapa[FILEIRAS][COLUNAS]) {
     printf("\nLegenda: X = ocupada | . = livre\n");
 }
 
-// Exibe as opções do sistema
+/* Exibe o menu */
 void exibirMenu() {
     printf("\n===== SISTEMA DE ESTACIONAMENTO =====\n");
     printf("1 - Cadastrar veiculo\n");
@@ -73,34 +69,29 @@ void exibirMenu() {
     printf("7 - Exibir mapa de vagas\n");
     printf("8 - Relatorio de ocupacao\n");
     printf("0 - Encerrar\n");
-    printf("Escolha uma opcao: ");
 }
 
-// Valida e padroniza o identificador
+/* Valida identificador com exatamente 7 caracteres alfanumericos */
 int validarIdentificador(char identificador[]) {
-
     if (strlen(identificador) != 7) {
         return 0;
     }
 
-    for (int i = 0; i < 7; i++) {
-
+    for (int i = 0; identificador[i] != '\0'; i++) {
         if (!isalnum((unsigned char)identificador[i])) {
             return 0;
         }
 
-        identificador[i] = toupper((unsigned char)identificador[i]);
+        identificador[i] = (char)toupper((unsigned char)identificador[i]);
     }
 
     return 1;
 }
 
-// Procura um veículo pelo identificador
+/* Busca um veiculo pelo identificador */
 int buscarVeiculo(Veiculo veiculos[], int quantidade,
                   char identificador[]) {
-
     for (int i = 0; i < quantidade; i++) {
-
         if (strcmp(veiculos[i].identificador, identificador) == 0) {
             return i;
         }
@@ -109,10 +100,9 @@ int buscarVeiculo(Veiculo veiculos[], int quantidade,
     return -1;
 }
 
-// Aumenta a capacidade do vetor dinâmico
+/* Aumenta a capacidade do vetor */
 int aumentarCapacidade(Veiculo **veiculos, int *capacidade) {
-
-    int novaCapacidade = *capacidade * 2;
+    int novaCapacidade = (*capacidade) * 2;
 
     Veiculo *temporario = realloc(
         *veiculos,
@@ -120,70 +110,77 @@ int aumentarCapacidade(Veiculo **veiculos, int *capacidade) {
     );
 
     if (temporario == NULL) {
+        printf("\nErro ao aumentar a memoria!\n");
         return 0;
     }
 
     *veiculos = temporario;
     *capacidade = novaCapacidade;
 
+    printf("\nCapacidade do vetor aumentada para %d veiculos!\n",
+           novaCapacidade);
+
     return 1;
 }
 
-// Cadastra um veículo
+/* Cadastra um veiculo */
 void cadastrarVeiculo(Veiculo **veiculos, int *quantidade,
                       int *capacidade,
                       int mapa[FILEIRAS][COLUNAS]) {
-
     Veiculo novo;
+    int identificadorValido = 0;
 
     printf("\n===== CADASTRO DE VEICULO =====\n");
 
-    // Leitura e validação do identificador
-    int identificadorValido = 0;
+    while (!identificadorValido) {
+        printf("Identificador (7 caracteres): ");
 
-while (!identificadorValido) {
+        if (fgets(novo.identificador,
+                  sizeof(novo.identificador), stdin) == NULL) {
+            return;
+        }
 
-    printf("Identificador (7 caracteres): ");
+        limparBufferEntrada();
 
-    if (fgets(novo.identificador,
-              sizeof(novo.identificador), stdin) == NULL) {
-        return;
+        novo.identificador[
+            strcspn(novo.identificador, "\n")
+        ] = '\0';
+
+        if (!validarIdentificador(novo.identificador)) {
+            printf("Identificador invalido! Digite exatamente 7 caracteres.\n");
+            continue;
+        }
+
+        if (buscarVeiculo(*veiculos, *quantidade,
+                          novo.identificador) != -1) {
+            printf("Esse identificador ja esta cadastrado!\n");
+            continue;
+        }
+
+        identificadorValido = 1;
     }
 
-    limparBufferEntrada();
-
-    novo.identificador[
-        strcspn(novo.identificador, "\n")
-    ] = '\0';
-
-    if (!validarIdentificador(novo.identificador)) {
-        printf("Identificador invalido! Digite exatamente 7 caracteres.\n");
-        continue;
-    }
-
-    if (buscarVeiculo(*veiculos, *quantidade,
-                      novo.identificador) != -1) {
-        printf("Esse identificador ja esta cadastrado!\n");
-        continue;
-    }
-
-    identificadorValido = 1;
-}
-
-    // Leitura da descrição
     printf("Descricao do veiculo: ");
 
     if (fgets(novo.descricao, sizeof(novo.descricao), stdin) == NULL) {
         return;
     }
 
+    if (strchr(novo.descricao, '\n') == NULL) {
+        limparBufferEntrada();
+    }
+
     novo.descricao[strcspn(novo.descricao, "\n")] = '\0';
 
-    // Leitura da categoria
     do {
         printf("Categoria (1 - Carro | 2 - Moto): ");
-        scanf("%d", &novo.categoria);
-        limparBufferEntrada();
+
+        if (scanf("%d", &novo.categoria) != 1) {
+            limparBufferEntrada();
+            novo.categoria = 0;
+        } else {
+            limparBufferEntrada();
+        }
 
         if (novo.categoria != 1 && novo.categoria != 2) {
             printf("Categoria invalida!\n");
@@ -191,61 +188,88 @@ while (!identificadorValido) {
 
     } while (novo.categoria != 1 && novo.categoria != 2);
 
-    // Escolha e validação da vaga
     do {
-        printf("Fileira (1 a %d): ", FILEIRAS);
-        scanf("%d", &novo.fileira);
+        printf("Fileira (1 a 4): ");
 
-        printf("Coluna (1 a %d): ", COLUNAS);
-        scanf("%d", &novo.coluna);
-
-        limparBufferEntrada();
-
-        if (novo.fileira < 1 || novo.fileira > FILEIRAS ||
-            novo.coluna < 1 || novo.coluna > COLUNAS) {
-
-            printf("Posicao invalida!\n");
-
-        } else if (mapa[novo.fileira - 1][novo.coluna - 1] == 1) {
-
-            printf("Essa vaga ja esta ocupada!\n");
+        if (scanf("%d", &novo.fileira) != 1) {
+            limparBufferEntrada();
             novo.fileira = 0;
-
+        } else {
+            limparBufferEntrada();
         }
 
-    } while (novo.fileira < 1 || novo.fileira > FILEIRAS ||
-             novo.coluna < 1 || novo.coluna > COLUNAS);
+        if (novo.fileira < 1 || novo.fileira > FILEIRAS) {
+            printf("Fileira invalida!\n");
+        }
 
-    // Verifica se o vetor precisa crescer
+    } while (novo.fileira < 1 || novo.fileira > FILEIRAS);
+
+    do {
+        printf("Coluna (1 a 5): ");
+
+        if (scanf("%d", &novo.coluna) != 1) {
+            limparBufferEntrada();
+            novo.coluna = 0;
+        } else {
+            limparBufferEntrada();
+        }
+
+        if (novo.coluna < 1 || novo.coluna > COLUNAS) {
+            printf("Coluna invalida!\n");
+        } else if (mapa[novo.fileira - 1][novo.coluna - 1] == 1) {
+            printf("Essa vaga ja esta ocupada!\n");
+            novo.coluna = 0;
+        }
+
+    } while (novo.coluna < 1 || novo.coluna > COLUNAS);
+
     if (*quantidade == *capacidade) {
-
         if (!aumentarCapacidade(veiculos, capacidade)) {
-            printf("Erro ao aumentar a memoria!\n");
             return;
         }
-
-        printf("Capacidade do vetor aumentada para %d veiculos!\n",
-               *capacidade);
     }
 
-    // Armazena o veículo no vetor
     (*veiculos)[*quantidade] = novo;
 
-    // Marca a vaga como ocupada
     mapa[novo.fileira - 1][novo.coluna - 1] = 1;
 
-    // Atualiza a quantidade de veículos
     (*quantidade)++;
 
     printf("\nVeiculo cadastrado com sucesso!\n");
 }
 
+/* Lista todos os veiculos */
+void listarVeiculos(Veiculo veiculos[], int quantidade) {
+    if (quantidade == 0) {
+        printf("\nNenhum veiculo cadastrado!\n");
+        return;
+    }
+
+    printf("\n===== VEICULOS CADASTRADOS =====\n");
+
+    for (int i = 0; i < quantidade; i++) {
+        printf("\nIdentificador: %s\n",
+               veiculos[i].identificador);
+
+        printf("Descricao: %s\n",
+               veiculos[i].descricao);
+
+        printf("Categoria: %s\n",
+               veiculos[i].categoria == 1 ? "Carro" : "Moto");
+
+        printf("Fileira: %d\n", veiculos[i].fileira);
+        printf("Coluna: %d\n", veiculos[i].coluna);
+
+        printf("-----------------------------\n");
+    }
+}
+
+/* Programa principal */
 int main() {
     int mapa[FILEIRAS][COLUNAS];
-    int opcao;
-
     int quantidade = 0;
     int capacidade = CAPACIDADE_INICIAL;
+    int opcao;
 
     Veiculo *veiculos = malloc(capacidade * sizeof(Veiculo));
 
@@ -258,13 +282,25 @@ int main() {
 
     do {
         exibirMenu();
-        scanf("%d", &opcao);
+
+        printf("Escolha uma opcao: ");
+
+        if (scanf("%d", &opcao) != 1) {
+            limparBufferEntrada();
+            printf("\nOpcao invalida!\n");
+            continue;
+        }
+
         limparBufferEntrada();
 
         switch (opcao) {
             case 1:
-                cadastrarVeiculo(&veiculos, &quantidade,
-                                 &capacidade, mapa);
+                cadastrarVeiculo(
+                    &veiculos,
+                    &quantidade,
+                    &capacidade,
+                    mapa
+                );
                 break;
 
             case 2:
@@ -284,7 +320,7 @@ int main() {
                 break;
 
             case 6:
-                printf("\nListagem sera implementada.\n");
+                listarVeiculos(veiculos, quantidade);
                 break;
 
             case 7:
@@ -300,14 +336,12 @@ int main() {
                 break;
 
             default:
-                printf("\nOpcao invalida! Tente novamente.\n");
+                printf("\nOpcao invalida!\n");
         }
 
     } while (opcao != 0);
 
     free(veiculos);
-
-    printf("Memoria liberada com sucesso!\n");
 
     return 0;
 }
