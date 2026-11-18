@@ -16,7 +16,7 @@ typedef struct {
     int coluna;
 } Veiculo;
 
-/* Limpa caracteres restantes da entrada */
+/* Limpa o buffer de entrada */
 void limparBufferEntrada() {
     int caractere;
 
@@ -33,7 +33,7 @@ void inicializarMapa(int mapa[FILEIRAS][COLUNAS]) {
     }
 }
 
-/* Exibe o mapa de vagas */
+/* Exibe o mapa */
 void exibirMapa(int mapa[FILEIRAS][COLUNAS]) {
     printf("\n===== MAPA DO ESTACIONAMENTO =====\n\n");
 
@@ -71,7 +71,7 @@ void exibirMenu() {
     printf("0 - Encerrar\n");
 }
 
-/* Valida identificador com exatamente 7 caracteres alfanumericos */
+/* Valida identificador */
 int validarIdentificador(char identificador[]) {
     if (strlen(identificador) != 7) {
         return 0;
@@ -82,13 +82,14 @@ int validarIdentificador(char identificador[]) {
             return 0;
         }
 
-        identificador[i] = (char)toupper((unsigned char)identificador[i]);
+        identificador[i] =
+            (char)toupper((unsigned char)identificador[i]);
     }
 
     return 1;
 }
 
-/* Busca um veiculo pelo identificador */
+/* Busca veiculo pelo identificador */
 int buscarVeiculo(Veiculo veiculos[], int quantidade,
                   char identificador[]) {
     for (int i = 0; i < quantidade; i++) {
@@ -123,7 +124,7 @@ int aumentarCapacidade(Veiculo **veiculos, int *capacidade) {
     return 1;
 }
 
-/* Cadastra um veiculo */
+/* Cadastra veiculo */
 void cadastrarVeiculo(Veiculo **veiculos, int *quantidade,
                       int *capacidade,
                       int mapa[FILEIRAS][COLUNAS]) {
@@ -238,7 +239,7 @@ void cadastrarVeiculo(Veiculo **veiculos, int *quantidade,
     printf("\nVeiculo cadastrado com sucesso!\n");
 }
 
-/* Lista todos os veiculos */
+/* Lista veiculos */
 void listarVeiculos(Veiculo veiculos[], int quantidade) {
     if (quantidade == 0) {
         printf("\nNenhum veiculo cadastrado!\n");
@@ -262,6 +263,44 @@ void listarVeiculos(Veiculo veiculos[], int quantidade) {
 
         printf("-----------------------------\n");
     }
+}
+
+/* Consulta veiculo */
+void consultarVeiculo(Veiculo veiculos[], int quantidade) {
+    char identificador[50];
+
+    printf("\n===== CONSULTAR VEICULO =====\n");
+    printf("Digite o identificador: ");
+
+    if (fgets(identificador, sizeof(identificador), stdin) == NULL) {
+        return;
+    }
+
+    identificador[strcspn(identificador, "\n")] = '\0';
+
+    if (!validarIdentificador(identificador)) {
+        printf("\nIdentificador invalido!\n");
+        return;
+    }
+
+    int posicao = buscarVeiculo(
+        veiculos,
+        quantidade,
+        identificador
+    );
+
+    if (posicao == -1) {
+        printf("\nVeiculo nao encontrado!\n");
+        return;
+    }
+
+    printf("\n===== DADOS DO VEICULO =====\n");
+    printf("Identificador: %s\n", veiculos[posicao].identificador);
+    printf("Descricao: %s\n", veiculos[posicao].descricao);
+    printf("Categoria: %s\n",
+           veiculos[posicao].categoria == 1 ? "Carro" : "Moto");
+    printf("Fileira: %d\n", veiculos[posicao].fileira);
+    printf("Coluna: %d\n", veiculos[posicao].coluna);
 }
 
 /* Programa principal */
@@ -304,7 +343,7 @@ int main() {
                 break;
 
             case 2:
-                printf("\nConsulta sera implementada.\n");
+                consultarVeiculo(veiculos, quantidade);
                 break;
 
             case 3:
