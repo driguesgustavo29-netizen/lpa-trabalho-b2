@@ -1,77 +1,173 @@
-
 # Sistema de Gestão de Estacionamento
 
-Projeto desenvolvido em linguagem C para a disciplina de Linguagem de Programação e Algoritmos (LPA).
+**Disciplina:** Lógica de Programação e Algoritmos  
+**Semestre:** 2026/2  
+**Trabalho:** Trabalho do 2º Bimestre – Sistema de Gestão de Estacionamento
 
-## Descrição
+## 1. Autor
 
-O sistema permite gerenciar um estacionamento com capacidade para 20 veículos, distribuídos em 4 fileiras e 5 colunas.
+- **Nome:** Gustavo da Silva Rodrigues
+- **GitHub:** [driguesgustavo29-netizen](https://github.com/driguesgustavo29-netizen)
+- **Repositório:** https://github.com/driguesgustavo29-netizen/lpa-trabalho-b2
 
-O programa oferece funcionalidades para cadastrar, consultar, atualizar, mover e remover veículos, além de apresentar o mapa de vagas e um relatório de ocupação.
+> Projeto desenvolvido individualmente. A modalidade individual deve ser confirmada com o professor, pois o roteiro prevê uma equipe de dois integrantes.
 
-## Funcionalidades
+## 2. Descrição do projeto
 
-1. Cadastrar veículo;
-2. Consultar veículo pelo identificador;
-3. Atualizar descrição e categoria;
-4. Mover veículo para outra vaga;
-5. Remover veículo;
-6. Listar veículos cadastrados;
-7. Exibir mapa de vagas;
-8. Gerar relatório de ocupação.
+O Sistema de Gestão de Estacionamento foi desenvolvido em linguagem C para administrar as vagas de um estacionamento com capacidade para 20 veículos, distribuídos em quatro fileiras e cinco colunas.
 
-## Regras do sistema
+O programa funciona pelo terminal e permite cadastrar, consultar, atualizar, movimentar, remover e listar veículos, além de apresentar o mapa das vagas e um relatório de ocupação.
 
-- O estacionamento possui 20 vagas.
-- Cada veículo possui um identificador de 7 caracteres alfanuméricos.
-- A descrição do veículo aceita até 60 caracteres.
-- As categorias são:
-  - 1 – Carro
-  - 2 – Moto
-- Não é permitido cadastrar identificadores duplicados.
-- Não é permitido ocupar uma vaga que já esteja preenchida.
-- O sistema valida as fileiras e colunas disponíveis.
+Os dados são mantidos em memória durante a execução do programa, sem utilização de banco de dados ou armazenamento permanente.
 
-## Estruturas utilizadas
+## 3. Funcionalidades implementadas
 
-O projeto utiliza:
+O sistema possui as seguintes funcionalidades:
 
-- `struct` para representar os veículos;
-- Vetor dinâmico para armazenar os veículos cadastrados;
-- `malloc`, `realloc` e `free` para gerenciamento de memória;
-- Matriz para representar as vagas do estacionamento;
-- Funções para organizar as operações do sistema;
-- Ponteiros para manipulação dos dados.
+1. Cadastro de veículos.
+2. Consulta de veículos pelo identificador.
+3. Atualização da descrição e categoria.
+4. Movimentação de veículos entre vagas.
+5. Remoção de veículos e liberação da vaga.
+6. Listagem dos veículos cadastrados.
+7. Exibição do mapa de vagas.
+8. Relatório de ocupação do estacionamento.
 
-## Compilação
+O menu também disponibiliza a opção de encerramento do programa.
 
-Para compilar o programa utilizando GCC:
+## 4. Estruturas de dados utilizadas
+
+### 4.1 Struct
+
+Foi utilizada a estrutura `struct` para representar os dados de cada veículo:
+
+- Identificador de sete caracteres;
+- Descrição de até 60 caracteres;
+- Categoria do veículo;
+- Número da fileira;
+- Número da coluna.
+
+### 4.2 Matriz
+
+Foi utilizada uma matriz de inteiros com quatro linhas e cinco colunas para representar as vagas.
+
+- `0`: vaga livre;
+- `1`: vaga ocupada.
+
+A matriz é atualizada sempre que um veículo é cadastrado, movimentado ou removido.
+
+### 4.3 Vetor dinâmico
+
+Os veículos são armazenados em um vetor dinâmico, utilizando alocação de memória com `malloc`, ampliação com `realloc` e liberação com `free`.
+
+A capacidade inicial do vetor é de dois veículos. Quando essa capacidade é atingida, o sistema dobra o espaço disponível.
+
+A quantidade representa o número de veículos cadastrados, enquanto a capacidade representa o espaço atualmente reservado na memória.
+
+## 5. Organização do código
+
+O projeto possui a seguinte organização:
+
+```text
+lpa-trabalho-b2/
+│
+├── src/
+│   └── main.c
+│
+└── README.md
+```
+
+O código está organizado em funções responsáveis por diferentes operações:
+
+- `lerTexto()` e `lerInteiro()`: leitura e validação de entradas.
+- `inicializarMapa()`: inicialização das vagas.
+- `exibirMapa()`: apresentação do mapa.
+- `exibirMenu()`: apresentação das opções.
+- `validarIdentificador()`: validação e padronização do identificador.
+- `buscarVeiculo()`: localização de veículos.
+- `aumentarCapacidade()`: ampliação do vetor dinâmico.
+- `cadastrarVeiculo()`: cadastro de veículos.
+- `consultarVeiculo()`: consulta de registros.
+- `atualizarVeiculo()`: atualização de informações.
+- `moverVeiculo()`: movimentação entre vagas.
+- `removerVeiculo()`: remoção de registros.
+- `listarVeiculos()`: listagem dos veículos.
+- `relatorioOcupacao()`: cálculo dos dados de ocupação.
+- `main()`: controle principal do programa.
+
+## 6. Como compilar e executar
+
+É necessário possuir um compilador GCC instalado.
+
+Na pasta principal do projeto, execute:
+
+**Compilação:**
 
 ```bash
 gcc -std=c11 -Wall -Wextra -pedantic src/main.c -o estacionamento
 ```
 
-## Execução
+**Execução:**
 
-Após a compilação, execute:
+No Windows com MSYS2:
 
 ```bash
 ./estacionamento
 ```
 
-## Organização do projeto
+## 7. Testes realizados
 
-```text
-lpa-trabalho-b2/
-├── src/
-│   └── main.c
-└── README.md
-```
+Os testes abaixo foram executados manualmente no terminal.
 
-## Capacidade do estacionamento
+| Teste | Operação | Resultado observado | Status |
+|---|---|---|---|
+| T01 | Exibir estacionamento vazio | 20 vagas livres e mapa correto | Aprovado |
+| T02 | Cadastrar veículo válido | Veículo cadastrado e vaga ocupada | Aprovado |
+| T03 | Cadastrar identificador duplicado em letras minúsculas | Cadastro recusado por duplicidade | Aprovado |
+| T05 | Cadastrar o terceiro veículo | Vetor ampliado de capacidade 2 para 4 | Aprovado |
+| T07 | Mover veículo para outra vaga livre | Origem liberada e destino ocupado | Aprovado |
+| T08 | Remover veículo | Registro removido e vaga liberada | Aprovado |
+| T09 | Tentar cadastrar o 21º veículo | Cadastro recusado com estacionamento lotado | Aprovado |
 
-| Informação | Quantidade |
-|---|---:|
-| Fileiras | 4 |
-| Colunas | 5 |
-| Total de vagas | 20 |
+### 7.1 Verificação de ocupação máxima
+
+No teste de lotação, foram cadastrados 20 veículos.
+
+O relatório apresentou:
+
+- Total de vagas: 20;
+- Vagas ocupadas: 20;
+- Vagas disponíveis: 0;
+- Percentual de ocupação: 100,00%;
+- Total de veículos cadastrados: 20.
+
+A tentativa de cadastrar o 21º veículo foi recusada corretamente.
+
+## 8. Responsabilidade pelo desenvolvimento
+
+O desenvolvimento do projeto foi realizado individualmente por Gustavo da Silva Rodrigues.
+
+As atividades envolveram a implementação das funcionalidades, organização do código, compilação, execução e testes do sistema.
+
+O repositório foi utilizado para registrar a evolução do projeto. Não houve integração de branches de outros integrantes, pois o desenvolvimento foi individual.
+
+## 9. Utilização de inteligência artificial
+
+O ChatGPT foi utilizado como ferramenta de apoio durante o desenvolvimento.
+
+Sua utilização teve como objetivos auxiliar na compreensão dos conceitos de programação em C, identificar e corrigir erros de compilação, revisar funções, orientar a implementação de estruturas de dados e sugerir procedimentos de teste.
+
+Entre os exemplos de solicitações realizadas estão:
+
+- Solicitação de explicação e correção de erros de compilação em C.
+- Orientação para implementar e revisar cadastro, consulta, atualização, movimentação e remoção de veículos.
+- Apoio na utilização de `struct`, matriz, ponteiros e alocação dinâmica de memória.
+- Orientação para testar duplicidade de identificadores, expansão do vetor e lotação máxima.
+
+O código foi compilado e executado no ambiente local, com testes manuais para verificar o funcionamento das operações implementadas.
+
+## 10. Considerações finais
+
+O desenvolvimento do sistema permitiu aplicar conceitos de lógica de programação, programação estruturada, funções, estruturas, matrizes, vetores dinâmicos e gerenciamento de memória.
+
+Os testes realizados demonstraram o funcionamento das principais operações e a atualização correta das informações de ocupação do estacionamento.
