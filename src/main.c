@@ -1,8 +1,17 @@
-
 #include <stdio.h>
+#include <stdlib.h>
 
 #define FILEIRAS 4
 #define COLUNAS 5
+#define CAPACIDADE_INICIAL 2
+
+typedef struct {
+    char identificador[8];
+    char descricao[61];
+    int categoria;
+    int fileira;
+    int coluna;
+} Veiculo;
 
 void inicializarMapa(int mapa[FILEIRAS][COLUNAS]) {
     for (int i = 0; i < FILEIRAS; i++) {
@@ -57,7 +66,19 @@ int main() {
     int mapa[FILEIRAS][COLUNAS];
     int opcao;
 
+    int quantidade = 0;
+    int capacidade = CAPACIDADE_INICIAL;
+
+    Veiculo *veiculos = malloc(capacidade * sizeof(Veiculo));
+
+    if (veiculos == NULL) {
+        printf("Erro ao alocar memoria!\n");
+        return 1;
+    }
+
     inicializarMapa(mapa);
+
+    printf("Memoria inicializada para %d veiculos.\n", capacidade);
 
     do {
         exibirMenu();
@@ -105,6 +126,10 @@ int main() {
         }
 
     } while (opcao != 0);
+
+    free(veiculos);
+
+    printf("Memoria liberada com sucesso!\n");
 
     return 0;
 }
