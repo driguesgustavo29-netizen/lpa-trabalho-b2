@@ -18,6 +18,7 @@ typedef struct {
     int coluna;
 } Veiculo;
 
+/* Leitura segura de textos */
 int lerTexto(const char *mensagem, char destino[], size_t tamanho) {
     char entrada[256];
 
@@ -29,8 +30,10 @@ int lerTexto(const char *mensagem, char destino[], size_t tamanho) {
 
     if (strchr(entrada, '\n') == NULL && !feof(stdin)) {
         int caractere;
+
         while ((caractere = getchar()) != '\n' && caractere != EOF) {
         }
+
         return 0;
     }
 
@@ -44,6 +47,7 @@ int lerTexto(const char *mensagem, char destino[], size_t tamanho) {
     return 1;
 }
 
+/* Leitura segura de numeros inteiros */
 int lerInteiro(const char *mensagem) {
     char entrada[100];
     char *fim;
@@ -69,6 +73,7 @@ int lerInteiro(const char *mensagem) {
     return (int)valor;
 }
 
+/* Inicializa todas as vagas como livres */
 void inicializarMapa(int mapa[FILEIRAS][COLUNAS]) {
     for (int i = 0; i < FILEIRAS; i++) {
         for (int j = 0; j < COLUNAS; j++) {
@@ -77,6 +82,7 @@ void inicializarMapa(int mapa[FILEIRAS][COLUNAS]) {
     }
 }
 
+/* Exibe o mapa do estacionamento */
 void exibirMapa(int mapa[FILEIRAS][COLUNAS]) {
     printf("\n===== MAPA DO ESTACIONAMENTO =====\n");
     printf("     ");
@@ -100,8 +106,11 @@ void exibirMapa(int mapa[FILEIRAS][COLUNAS]) {
 
         printf("\n");
     }
+
+    printf("\nLegenda: [X] = Ocupada | [ ] = Livre\n");
 }
 
+/* Exibe o menu principal */
 void exibirMenu(void) {
     printf("\n===== SISTEMA DE GESTAO DE ESTACIONAMENTO =====\n");
     printf("1 - Cadastrar veiculo\n");
@@ -115,6 +124,7 @@ void exibirMenu(void) {
     printf("0 - Sair\n");
 }
 
+/* Valida o identificador e converte para letras maiusculas */
 int validarIdentificador(char identificador[]) {
     if (strlen(identificador) != 7) {
         return 0;
@@ -132,6 +142,7 @@ int validarIdentificador(char identificador[]) {
     return 1;
 }
 
+/* Procura um veiculo pelo identificador */
 int buscarVeiculo(
     Veiculo veiculos[],
     int quantidade,
@@ -146,6 +157,7 @@ int buscarVeiculo(
     return -1;
 }
 
+/* Aumenta a capacidade do vetor dinamico */
 int aumentarCapacidade(Veiculo **veiculos, int *capacidade) {
     int novaCapacidade = (*capacidade) * 2;
 
@@ -168,6 +180,7 @@ int aumentarCapacidade(Veiculo **veiculos, int *capacidade) {
     return 1;
 }
 
+/* Cadastra um novo veiculo */
 void cadastrarVeiculo(
     Veiculo **veiculos,
     int *quantidade,
@@ -179,6 +192,11 @@ void cadastrarVeiculo(
     int valido = 0;
 
     printf("\n===== CADASTRO DE VEICULO =====\n");
+
+    if (*quantidade >= TOTAL_VAGAS) {
+        printf("Estacionamento lotado! Todas as vagas estao ocupadas.\n");
+        return;
+    }
 
     while (!valido) {
         if (!lerTexto("Identificador (7 caracteres): ",
@@ -204,8 +222,9 @@ void cadastrarVeiculo(
 
     while (!lerTexto("Descricao do veiculo (maximo 60 caracteres): ",
                      novoVeiculo.descricao,
-                     sizeof(novoVeiculo.descricao))) {
-        printf("Descricao muito longa. Tente novamente.\n");
+                     sizeof(novoVeiculo.descricao)) ||
+           strlen(novoVeiculo.descricao) == 0) {
+        printf("Descricao invalida. Nao pode ficar vazia nem ultrapassar 60 caracteres.\n");
     }
 
     do {
@@ -260,6 +279,7 @@ void cadastrarVeiculo(
     printf("\nVeiculo cadastrado com sucesso!\n");
 }
 
+/* Lista todos os veiculos cadastrados */
 void listarVeiculos(Veiculo veiculos[], int quantidade) {
     printf("\n===== LISTA DE VEICULOS =====\n");
 
@@ -279,6 +299,7 @@ void listarVeiculos(Veiculo veiculos[], int quantidade) {
     }
 }
 
+/* Consulta um veiculo pelo identificador */
 void consultarVeiculo(Veiculo veiculos[], int quantidade) {
     char identificador[100];
 
@@ -314,6 +335,7 @@ void consultarVeiculo(Veiculo veiculos[], int quantidade) {
     printf("Coluna: %d\n", veiculos[posicao].coluna);
 }
 
+/* Atualiza a descricao e a categoria de um veiculo */
 void atualizarVeiculo(Veiculo veiculos[], int quantidade) {
     char identificador[100];
     char novaDescricao[61];
@@ -343,8 +365,9 @@ void atualizarVeiculo(Veiculo veiculos[], int quantidade) {
     }
 
     while (!lerTexto("Nova descricao: ",
-                     novaDescricao, sizeof(novaDescricao))) {
-        printf("Descricao muito longa. Tente novamente.\n");
+                     novaDescricao, sizeof(novaDescricao)) ||
+           strlen(novaDescricao) == 0) {
+        printf("Descricao invalida. Nao pode ficar vazia nem ultrapassar 60 caracteres.\n");
     }
 
     do {
@@ -363,6 +386,7 @@ void atualizarVeiculo(Veiculo veiculos[], int quantidade) {
     printf("Veiculo atualizado com sucesso!\n");
 }
 
+/* Move um veiculo para outra vaga */
 void moverVeiculo(
     Veiculo veiculos[],
     int quantidade,
@@ -438,6 +462,7 @@ void moverVeiculo(
            novaFileira, novaColuna);
 }
 
+/* Remove um veiculo e libera sua vaga */
 void removerVeiculo(
     Veiculo veiculos[],
     int *quantidade,
@@ -531,6 +556,7 @@ void relatorioOcupacao(
     printf("=================================\n");
 }
 
+/* Funcao principal */
 int main(void) {
     Veiculo *veiculos = malloc(
         CAPACIDADE_INICIAL * sizeof(Veiculo)
