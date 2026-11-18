@@ -62,7 +62,8 @@ int lerInteiro(const char *mensagem) {
         fim++;
     }
 
-    if (fim == entrada || *fim != '\0' || valor < INT_MIN || valor > INT_MAX) {
+    if (fim == entrada || *fim != '\0' ||
+        valor < INT_MIN || valor > INT_MAX) {
         return -1;
     }
 
@@ -129,14 +130,19 @@ int validarIdentificador(char identificador[]) {
             return 0;
         }
 
-        identificador[i] = (char)toupper((unsigned char)identificador[i]);
+        identificador[i] =
+            (char)toupper((unsigned char)identificador[i]);
     }
 
     return 1;
 }
 
 /* Busca um veiculo pelo identificador */
-int buscarVeiculo(Veiculo veiculos[], int quantidade, const char identificador[]) {
+int buscarVeiculo(
+    Veiculo veiculos[],
+    int quantidade,
+    const char identificador[]
+) {
     for (int i = 0; i < quantidade; i++) {
         if (strcmp(veiculos[i].identificador, identificador) == 0) {
             return i;
@@ -225,7 +231,8 @@ void cadastrarVeiculo(
     do {
         novoVeiculo.fileira = lerInteiro("Fileira (1 a 4): ");
 
-        if (novoVeiculo.fileira < 1 || novoVeiculo.fileira > FILEIRAS) {
+        if (novoVeiculo.fileira < 1 ||
+            novoVeiculo.fileira > FILEIRAS) {
             printf("Fileira invalida.\n");
         }
     } while (novoVeiculo.fileira < 1 ||
@@ -234,7 +241,8 @@ void cadastrarVeiculo(
     do {
         novoVeiculo.coluna = lerInteiro("Coluna (1 a 5): ");
 
-        if (novoVeiculo.coluna < 1 || novoVeiculo.coluna > COLUNAS) {
+        if (novoVeiculo.coluna < 1 ||
+            novoVeiculo.coluna > COLUNAS) {
             printf("Coluna invalida.\n");
         } else if (mapa[novoVeiculo.fileira - 1]
                        [novoVeiculo.coluna - 1] == 1) {
@@ -252,7 +260,8 @@ void cadastrarVeiculo(
 
     (*veiculos)[*quantidade] = novoVeiculo;
 
-    mapa[novoVeiculo.fileira - 1][novoVeiculo.coluna - 1] = 1;
+    mapa[novoVeiculo.fileira - 1]
+        [novoVeiculo.coluna - 1] = 1;
 
     (*quantidade)++;
 
@@ -297,7 +306,9 @@ void consultarVeiculo(Veiculo veiculos[], int quantidade) {
         return;
     }
 
-    int posicao = buscarVeiculo(veiculos, quantidade, identificador);
+    int posicao = buscarVeiculo(
+        veiculos, quantidade, identificador
+    );
 
     if (posicao == -1) {
         printf("Veiculo nao encontrado.\n");
@@ -333,7 +344,9 @@ void atualizarVeiculo(Veiculo veiculos[], int quantidade) {
         return;
     }
 
-    int posicao = buscarVeiculo(veiculos, quantidade, identificador);
+    int posicao = buscarVeiculo(
+        veiculos, quantidade, identificador
+    );
 
     if (posicao == -1) {
         printf("Veiculo nao encontrado.\n");
@@ -385,7 +398,9 @@ void moverVeiculo(
         return;
     }
 
-    int posicao = buscarVeiculo(veiculos, quantidade, identificador);
+    int posicao = buscarVeiculo(
+        veiculos, quantidade, identificador
+    );
 
     if (posicao == -1) {
         printf("Veiculo nao encontrado.\n");
@@ -422,14 +437,11 @@ void moverVeiculo(
         }
     } while (novaColuna < 1 || novaColuna > COLUNAS);
 
-    /* Libera a vaga antiga */
     mapa[veiculos[posicao].fileira - 1]
         [veiculos[posicao].coluna - 1] = 0;
 
-    /* Ocupa a nova vaga */
     mapa[novaFileira - 1][novaColuna - 1] = 1;
 
-    /* Atualiza a localizacao do veiculo */
     veiculos[posicao].fileira = novaFileira;
     veiculos[posicao].coluna = novaColuna;
 
@@ -438,6 +450,61 @@ void moverVeiculo(
            novaFileira, novaColuna);
 }
 
+/* Remove um veiculo */
+void removerVeiculo(
+    Veiculo veiculos[],
+    int *quantidade,
+    int mapa[FILEIRAS][COLUNAS]
+) {
+    char identificador[100];
+
+    printf("\n===== REMOVER VEICULO =====\n");
+
+    if (*quantidade == 0) {
+        printf("Nenhum veiculo cadastrado.\n");
+        return;
+    }
+
+    if (!lerTexto("Digite o identificador do veiculo: ",
+                  identificador, sizeof(identificador)) ||
+        !validarIdentificador(identificador)) {
+        printf("Identificador invalido.\n");
+        return;
+    }
+
+    int posicao = buscarVeiculo(
+        veiculos, *quantidade, identificador
+    );
+
+    if (posicao == -1) {
+        printf("Veiculo nao encontrado.\n");
+        return;
+    }
+
+    printf("\nVeiculo encontrado:\n");
+    printf("Identificador: %s\n", veiculos[posicao].identificador);
+    printf("Descricao: %s\n", veiculos[posicao].descricao);
+    printf("Vaga: Fileira %d, Coluna %d\n",
+           veiculos[posicao].fileira,
+           veiculos[posicao].coluna);
+
+    /* Libera a vaga no mapa */
+    mapa[veiculos[posicao].fileira - 1]
+        [veiculos[posicao].coluna - 1] = 0;
+
+    /* Reorganiza os elementos do vetor */
+    for (int i = posicao; i < *quantidade - 1; i++) {
+        veiculos[i] = veiculos[i + 1];
+    }
+
+    /* Atualiza a quantidade de veiculos */
+    (*quantidade)--;
+
+    printf("\nVeiculo removido com sucesso!\n");
+    printf("A vaga foi liberada no estacionamento.\n");
+}
+
+/* Programa principal */
 int main(void) {
     Veiculo *veiculos = malloc(
         CAPACIDADE_INICIAL * sizeof(Veiculo)
@@ -483,7 +550,7 @@ int main(void) {
                 break;
 
             case 5:
-                printf("Remocao sera implementada.\n");
+                removerVeiculo(veiculos, &quantidade, mapa);
                 break;
 
             case 6:
