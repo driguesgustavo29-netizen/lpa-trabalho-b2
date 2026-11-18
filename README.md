@@ -161,4 +161,10 @@ Entre os exemplos de solicitações realizadas estão:
 - Apoio na utilização de `struct`, matriz, ponteiros e alocação dinâmica de memória.
 - Orientação para testar duplicidade de identificadores, expansão do vetor e lotação máxima.
 
-O código
+O código foi compilado e executado no ambiente local, com testes manuais para verificar o funcionamento das operações implementadas.
+
+## 10. Considerações finais
+
+O desenvolvimento do sistema permitiu aplicar conceitos de lógica de programação, programação estruturada, funções, estruturas, matrizes, vetores dinâmicos e gerenciamento de memória.
+
+Os testes realizados demonstraram o funcionamento das principais operações e a atualização correta das informações de ocupação do estacionamento.
