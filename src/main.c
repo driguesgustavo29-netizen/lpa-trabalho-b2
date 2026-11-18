@@ -8,6 +8,7 @@
 #define FILEIRAS 4
 #define COLUNAS 5
 #define CAPACIDADE_INICIAL 2
+#define TOTAL_VAGAS (FILEIRAS * COLUNAS)
 
 typedef struct {
     char identificador[8];
@@ -17,7 +18,6 @@ typedef struct {
     int coluna;
 } Veiculo;
 
-/* Le uma linha de texto */
 int lerTexto(const char *mensagem, char destino[], size_t tamanho) {
     char entrada[256];
 
@@ -44,7 +44,6 @@ int lerTexto(const char *mensagem, char destino[], size_t tamanho) {
     return 1;
 }
 
-/* Le um numero inteiro */
 int lerInteiro(const char *mensagem) {
     char entrada[100];
     char *fim;
@@ -70,7 +69,6 @@ int lerInteiro(const char *mensagem) {
     return (int)valor;
 }
 
-/* Inicializa o mapa */
 void inicializarMapa(int mapa[FILEIRAS][COLUNAS]) {
     for (int i = 0; i < FILEIRAS; i++) {
         for (int j = 0; j < COLUNAS; j++) {
@@ -79,7 +77,6 @@ void inicializarMapa(int mapa[FILEIRAS][COLUNAS]) {
     }
 }
 
-/* Exibe o mapa do estacionamento */
 void exibirMapa(int mapa[FILEIRAS][COLUNAS]) {
     printf("\n===== MAPA DO ESTACIONAMENTO =====\n");
     printf("     ");
@@ -105,7 +102,6 @@ void exibirMapa(int mapa[FILEIRAS][COLUNAS]) {
     }
 }
 
-/* Exibe o menu */
 void exibirMenu(void) {
     printf("\n===== SISTEMA DE GESTAO DE ESTACIONAMENTO =====\n");
     printf("1 - Cadastrar veiculo\n");
@@ -119,7 +115,6 @@ void exibirMenu(void) {
     printf("0 - Sair\n");
 }
 
-/* Valida e padroniza o identificador */
 int validarIdentificador(char identificador[]) {
     if (strlen(identificador) != 7) {
         return 0;
@@ -137,7 +132,6 @@ int validarIdentificador(char identificador[]) {
     return 1;
 }
 
-/* Busca um veiculo pelo identificador */
 int buscarVeiculo(
     Veiculo veiculos[],
     int quantidade,
@@ -152,7 +146,6 @@ int buscarVeiculo(
     return -1;
 }
 
-/* Aumenta a capacidade do vetor */
 int aumentarCapacidade(Veiculo **veiculos, int *capacidade) {
     int novaCapacidade = (*capacidade) * 2;
 
@@ -175,7 +168,6 @@ int aumentarCapacidade(Veiculo **veiculos, int *capacidade) {
     return 1;
 }
 
-/* Cadastra um veiculo */
 void cadastrarVeiculo(
     Veiculo **veiculos,
     int *quantidade,
@@ -268,7 +260,6 @@ void cadastrarVeiculo(
     printf("\nVeiculo cadastrado com sucesso!\n");
 }
 
-/* Lista todos os veiculos */
 void listarVeiculos(Veiculo veiculos[], int quantidade) {
     printf("\n===== LISTA DE VEICULOS =====\n");
 
@@ -288,7 +279,6 @@ void listarVeiculos(Veiculo veiculos[], int quantidade) {
     }
 }
 
-/* Consulta um veiculo */
 void consultarVeiculo(Veiculo veiculos[], int quantidade) {
     char identificador[100];
 
@@ -324,7 +314,6 @@ void consultarVeiculo(Veiculo veiculos[], int quantidade) {
     printf("Coluna: %d\n", veiculos[posicao].coluna);
 }
 
-/* Atualiza a descricao e a categoria */
 void atualizarVeiculo(Veiculo veiculos[], int quantidade) {
     char identificador[100];
     char novaDescricao[61];
@@ -374,7 +363,6 @@ void atualizarVeiculo(Veiculo veiculos[], int quantidade) {
     printf("Veiculo atualizado com sucesso!\n");
 }
 
-/* Move um veiculo para outra vaga */
 void moverVeiculo(
     Veiculo veiculos[],
     int quantidade,
@@ -450,7 +438,6 @@ void moverVeiculo(
            novaFileira, novaColuna);
 }
 
-/* Remove um veiculo */
 void removerVeiculo(
     Veiculo veiculos[],
     int *quantidade,
@@ -488,23 +475,62 @@ void removerVeiculo(
            veiculos[posicao].fileira,
            veiculos[posicao].coluna);
 
-    /* Libera a vaga no mapa */
     mapa[veiculos[posicao].fileira - 1]
         [veiculos[posicao].coluna - 1] = 0;
 
-    /* Reorganiza os elementos do vetor */
     for (int i = posicao; i < *quantidade - 1; i++) {
         veiculos[i] = veiculos[i + 1];
     }
 
-    /* Atualiza a quantidade de veiculos */
     (*quantidade)--;
 
     printf("\nVeiculo removido com sucesso!\n");
     printf("A vaga foi liberada no estacionamento.\n");
 }
 
-/* Programa principal */
+/* Gera o relatorio de ocupacao */
+void relatorioOcupacao(
+    Veiculo veiculos[],
+    int quantidade,
+    int mapa[FILEIRAS][COLUNAS]
+) {
+    int vagasOcupadas = 0;
+    int carros = 0;
+    int motos = 0;
+
+    for (int i = 0; i < FILEIRAS; i++) {
+        for (int j = 0; j < COLUNAS; j++) {
+            if (mapa[i][j] == 1) {
+                vagasOcupadas++;
+            }
+        }
+    }
+
+    for (int i = 0; i < quantidade; i++) {
+        if (veiculos[i].categoria == 1) {
+            carros++;
+        } else if (veiculos[i].categoria == 2) {
+            motos++;
+        }
+    }
+
+    int vagasDisponiveis = TOTAL_VAGAS - vagasOcupadas;
+
+    float percentual = (float)vagasOcupadas /
+                       TOTAL_VAGAS * 100.0f;
+
+    printf("\n===== RELATORIO DE OCUPACAO =====\n");
+    printf("Total de vagas: %d\n", TOTAL_VAGAS);
+    printf("Vagas ocupadas: %d\n", vagasOcupadas);
+    printf("Vagas disponiveis: %d\n", vagasDisponiveis);
+    printf("Percentual de ocupacao: %.2f%%\n", percentual);
+    printf("---------------------------------\n");
+    printf("Total de veiculos cadastrados: %d\n", quantidade);
+    printf("Quantidade de carros: %d\n", carros);
+    printf("Quantidade de motos: %d\n", motos);
+    printf("=================================\n");
+}
+
 int main(void) {
     Veiculo *veiculos = malloc(
         CAPACIDADE_INICIAL * sizeof(Veiculo)
@@ -562,7 +588,7 @@ int main(void) {
                 break;
 
             case 8:
-                printf("Relatorio sera implementado.\n");
+                relatorioOcupacao(veiculos, quantidade, mapa);
                 break;
 
             case 0:
