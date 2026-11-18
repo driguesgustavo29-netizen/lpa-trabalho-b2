@@ -10,7 +10,7 @@
 - **GitHub:** [driguesgustavo29-netizen](https://github.com/driguesgustavo29-netizen)
 - **Repositório:** https://github.com/driguesgustavo29-netizen/lpa-trabalho-b2
 
-> Projeto desenvolvido individualmente. A modalidade individual deve ser confirmada com o professor, pois o roteiro prevê uma equipe de dois integrantes.
+**Modalidade:** Desenvolvimento individual.
 
 ## 2. Descrição do projeto
 
@@ -22,8 +22,6 @@ Os dados são mantidos em memória durante a execução do programa, sem utiliza
 
 ## 3. Funcionalidades implementadas
 
-O sistema possui as seguintes funcionalidades:
-
 1. Cadastro de veículos.
 2. Consulta de veículos pelo identificador.
 3. Atualização da descrição e categoria.
@@ -32,8 +30,7 @@ O sistema possui as seguintes funcionalidades:
 6. Listagem dos veículos cadastrados.
 7. Exibição do mapa de vagas.
 8. Relatório de ocupação do estacionamento.
-
-O menu também disponibiliza a opção de encerramento do programa.
+9. Encerramento do programa com liberação da memória.
 
 ## 4. Estruturas de dados utilizadas
 
@@ -77,7 +74,7 @@ lpa-trabalho-b2/
 └── README.md
 ```
 
-O código está organizado em funções responsáveis por diferentes operações:
+O código está organizado nas seguintes funções:
 
 - `lerTexto()` e `lerInteiro()`: leitura e validação de entradas.
 - `inicializarMapa()`: inicialização das vagas.
@@ -109,22 +106,22 @@ gcc -std=c11 -Wall -Wextra -pedantic src/main.c -o estacionamento
 
 **Execução:**
 
-No Windows com MSYS2:
-
 ```bash
 ./estacionamento
 ```
 
 ## 7. Testes realizados
 
-Os testes abaixo foram executados manualmente no terminal.
+Os testes foram executados manualmente no terminal.
 
 | Teste | Operação | Resultado observado | Status |
 |---|---|---|---|
 | T01 | Exibir estacionamento vazio | 20 vagas livres e mapa correto | Aprovado |
 | T02 | Cadastrar veículo válido | Veículo cadastrado e vaga ocupada | Aprovado |
 | T03 | Cadastrar identificador duplicado em letras minúsculas | Cadastro recusado por duplicidade | Aprovado |
+| T04 | Tentar utilizar vaga ocupada ou índice inválido | Operação recusada sem alteração indevida | Aprovado |
 | T05 | Cadastrar o terceiro veículo | Vetor ampliado de capacidade 2 para 4 | Aprovado |
+| T06 | Atualizar informações de veículo | Descrição e categoria atualizadas | Aprovado |
 | T07 | Mover veículo para outra vaga livre | Origem liberada e destino ocupado | Aprovado |
 | T08 | Remover veículo | Registro removido e vaga liberada | Aprovado |
 | T09 | Tentar cadastrar o 21º veículo | Cadastro recusado com estacionamento lotado | Aprovado |
@@ -164,10 +161,4 @@ Entre os exemplos de solicitações realizadas estão:
 - Apoio na utilização de `struct`, matriz, ponteiros e alocação dinâmica de memória.
 - Orientação para testar duplicidade de identificadores, expansão do vetor e lotação máxima.
 
-O código foi compilado e executado no ambiente local, com testes manuais para verificar o funcionamento das operações implementadas.
-
-## 10. Considerações finais
-
-O desenvolvimento do sistema permitiu aplicar conceitos de lógica de programação, programação estruturada, funções, estruturas, matrizes, vetores dinâmicos e gerenciamento de memória.
-
-Os testes realizados demonstraram o funcionamento das principais operações e a atualização correta das informações de ocupação do estacionamento.
+O código
